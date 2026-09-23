@@ -3,7 +3,7 @@
 
 Roomline is an end-to-end machine learning application that predicts the **room type of an Airbnb listing in New York City** using location, pricing, review, host, and availability-related features.
 
-🔗 **Live Demo:** https://roomline-guvg.onrender.com/predict.html
+🔗 **Live Demo:** https://roomline-guvg.onrender.com/
 
 ---
 
