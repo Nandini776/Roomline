@@ -4,6 +4,7 @@ import pandas as pd
 from pydantic import BaseModel, Field
 import joblib
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -44,8 +45,28 @@ class Features(BaseModel):
 
 
 @app.get("/")
-def greet():
-    return "hello guys"
+def home():
+    return FileResponse("index.html")
+
+
+@app.get("/about.html")
+def about():
+    return FileResponse("about.html")
+
+
+@app.get("/predict.html")
+def predict_page():
+    return FileResponse("predict.html")
+
+
+@app.get("/style.css")
+def style():
+    return FileResponse("style.css")
+
+
+@app.get("/script.js")
+def script():
+    return FileResponse("script.js")
 
 
 @app.post("/predict")

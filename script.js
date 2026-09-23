@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ---- change this if your API runs elsewhere ----
-const API_BASE = window.ROOMLINE_API_BASE || "http://127.0.0.1:8000";
+const API_BASE = "";
 
 // ---- highlight current stop in the top nav ----
 (function markActiveRoute(){
@@ -101,7 +101,7 @@ function initPredictForm(){
     loader.classList.add("show");
 
     try{
-      const res = await fetch(`${API_BASE}/predict`, {
+      const res = await fetch(`/predict`, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify(payload)
