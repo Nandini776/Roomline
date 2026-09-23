@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Predict — Roomline</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><span class="bullet">R</span> Roomline</div>
+    <ul class="route">
+      <li><a href="index.html">Home</a></li>
+      <li><span class="seg"></span></li>
+      <li><a href="predict.html" class="active">Predict</a></li>
+      <li><span class="seg"></span></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="tight">
+  <div class="wrap">
+    <div class="eyebrow" style="font-family:var(--font-mono); font-size:.78rem; color:var(--text-faint); margin-bottom:10px;">BOARD HERE</div>
+    <h1 style="font-size:clamp(2rem,4vw,2.8rem);">Describe the listing</h1>
+    <p>Fill in what you know. Leave nothing blank — the model expects a value for every field.</p>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap grid-2">
+
+    <form id="predict-form" novalidate>
+
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-title"><span class="num">1</span><h3 style="margin:0;">Location</h3></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="neighbourhood_group">Borough</label>
+            <select id="neighbourhood_group" required>
+              <option value="" disabled selected>Choose a borough</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="neighbourhood">Neighbourhood</label>
+            <input list="neighbourhood-list" id="neighbourhood" placeholder="Start typing…" required autocomplete="off">
+            <datalist id="neighbourhood-list"></datalist>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="latitude">Latitude</label>
+            <input type="number" id="latitude" step="0.000001" placeholder="40.7128" min="-90" max="90" required>
+          </div>
+          <div class="field">
+            <label for="longitude">Longitude</label>
+            <input type="number" id="longitude" step="0.000001" placeholder="-73.9903" min="-180" max="180" required>
+            <div class="hint">NYC longitudes are negative (around -74).</div>
+          </div>
+        </div>
+
+        <div class="locator">
+          <svg viewBox="0 0 300 240" role="img" aria-label="Approximate position within the five boroughs">
+            <!-- stylised, non-geographic borough blocks -->
+            <rect x="150" y="14" width="60" height="70"  rx="4" fill="#171D27" stroke="#232A35"/>
+            <rect x="60"  y="90" width="90" height="60"  rx="4" fill="#171D27" stroke="#232A35"/>
+            <rect x="150" y="90" width="90" height="70"  rx="4" fill="#171D27" stroke="#232A35"/>
+            <rect x="160" y="160" width="90" height="60" rx="4" fill="#171D27" stroke="#232A35"/>
+            <rect x="30"  y="165" width="100" height="55" rx="4" fill="#171D27" stroke="#232A35"/>
+            <text x="180" y="52"  fill="#565F6C" font-size="10" font-family="IBM Plex Mono">BX</text>
+            <text x="100" y="122" fill="#565F6C" font-size="10" font-family="IBM Plex Mono">MN</text>
+            <text x="190" y="128" fill="#565F6C" font-size="10" font-family="IBM Plex Mono">QN</text>
+            <text x="200" y="192" fill="#565F6C" font-size="10" font-family="IBM Plex Mono">BK</text>
+            <text x="70"  y="195" fill="#565F6C" font-size="10" font-family="IBM Plex Mono">SI</text>
+            <circle id="locator-dot" cx="20" cy="16" r="6" fill="#FFC53D" style="opacity:0; transition:cx .25s ease, cy .25s ease;"/>
+          </svg>
+          <div class="caption">Approximate position — for orientation, not geography</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-title"><span class="num">2</span><h3 style="margin:0;">Listing basics</h3></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="price">Price per night (USD)</label>
+            <input type="number" id="price" step="1" min="1" placeholder="150" required>
+          </div>
+          <div class="field">
+            <label for="minimum_nights">Minimum nights</label>
+            <input type="number" id="minimum_nights" step="1" min="1" max="365" placeholder="2" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="availability_365">Days available per year</label>
+          <input type="number" id="availability_365" step="1" min="0" max="365" placeholder="180" required>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-title"><span class="num">3</span><h3 style="margin:0;">Host &amp; reviews</h3></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="number_of_reviews">Total reviews</label>
+            <input type="number" id="number_of_reviews" step="1" min="0" placeholder="24" required>
+          </div>
+          <div class="field">
+            <label for="reviews_per_month">Reviews per month</label>
+            <input type="number" id="reviews_per_month" step="0.01" min="0" placeholder="0.85" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="calculated_host_listings_count">Listings by this host</label>
+          <input type="number" id="calculated_host_listings_count" step="1" min="0" placeholder="1" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="submit-btn" style="width:100%; justify-content:center;">Predict room type</button>
+
+      <div class="loader" id="loader">
+        <div class="dots"><span></span></div>
+        <div class="msg">running the random forest…</div>
+      </div>
+
+      <div class="error-box" id="error-box"></div>
+    </form>
+
+    <div>
+      <div class="card" style="position:sticky; top:88px;">
+        <div class="card-title"><h3 style="margin:0;">Result</h3></div>
+        <p style="margin-bottom:0;">Submit the form to see the predicted room type and how confident the model is.</p>
+
+        <div id="result">
+          <div class="result-head">
+            <span class="label" id="result-label">—</span>
+            <span class="conf" id="result-conf"></span>
+          </div>
+
+          <div class="bar-row">
+            <div class="bar-label"><span>Entire home/apt</span><span id="pct-entire">0%</span></div>
+            <div class="bar-track"><div class="bar-fill entire" id="bar-entire"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span>Private room</span><span id="pct-private">0%</span></div>
+            <div class="bar-track"><div class="bar-fill private" id="bar-private"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span>Shared room</span><span id="pct-shared">0%</span></div>
+            <div class="bar-track"><div class="bar-fill shared" id="bar-shared"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Calling <span style="font-family:var(--font-mono);">/predict</span> on your FastAPI backend ·
+    make sure it's running and reachable before submitting · <a href="about.html">about the model</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

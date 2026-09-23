@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — Roomline</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><span class="bullet">R</span> Roomline</div>
+    <ul class="route">
+      <li><a href="index.html">Home</a></li>
+      <li><span class="seg"></span></li>
+      <li><a href="predict.html">Predict</a></li>
+      <li><span class="seg"></span></li>
+      <li><a href="about.html" class="active">About</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="tight">
+  <div class="wrap">
+    <div class="eyebrow" style="font-family:var(--font-mono); font-size:.78rem; color:var(--text-faint); margin-bottom:10px;">SYSTEM MAP</div>
+    <h1 style="font-size:clamp(2rem,4vw,2.8rem);">How Roomline gets to an answer</h1>
+    <p>Roomline wraps a scikit-learn pipeline trained on NYC Airbnb listings. Nothing about the prediction is hand-tuned per request — the same four stages run every time.</p>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap">
+    <svg class="diagram" viewBox="0 0 1000 140" role="img" aria-label="Pipeline diagram: input, numeric scaling and category encoding, random forest, prediction">
+      <line x1="70" y1="70" x2="930" y2="70" stroke="#232A35" stroke-width="2"/>
+      <g font-family="IBM Plex Mono" font-size="12" fill="#8B93A1" text-anchor="middle">
+        <circle cx="70" cy="70" r="9" fill="#FFC53D"/>
+        <text x="70" y="104">10 fields</text>
+        <text x="70" y="40">Your input</text>
+
+        <circle cx="360" cy="70" r="9" fill="#4D7EC9"/>
+        <text x="360" y="104">scale + one-hot</text>
+        <text x="360" y="40">Preprocessing</text>
+
+        <circle cx="650" cy="70" r="9" fill="#4D7EC9"/>
+        <text x="650" y="104">50 trees</text>
+        <text x="650" y="40">Random forest</text>
+
+        <circle cx="930" cy="70" r="9" fill="#00933C"/>
+        <text x="930" y="104">3 classes</text>
+        <text x="930" y="40">Room type</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap grid-2">
+    <div>
+      <h2>The dataset</h2>
+      <p>The model is trained on the NYC Airbnb Open Data listings set — tens of thousands of real listings across the Bronx, Brooklyn, Manhattan, Queens and Staten Island, each labelled with its actual room type.</p>
+      <h2 style="margin-top:32px;">The pipeline</h2>
+      <p>Numeric fields (price, coordinates, review counts…) are median-imputed and standard-scaled. Categorical fields (borough, neighbourhood) are one-hot encoded, with unseen neighbourhoods handled gracefully rather than rejected. A random forest of 50 trees, weighted to correct for how much more common entire-home listings are, makes the final call.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;">Fields the model uses</h3>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Borough</td><td class="mono">category</td></tr>
+          <tr><td>Neighbourhood</td><td class="mono">category</td></tr>
+          <tr><td>Latitude / Longitude</td><td class="mono">float</td></tr>
+          <tr><td>Price per night</td><td class="mono">float</td></tr>
+          <tr><td>Minimum nights</td><td class="mono">int</td></tr>
+          <tr><td>Number of reviews</td><td class="mono">int</td></tr>
+          <tr><td>Reviews per month</td><td class="mono">float</td></tr>
+          <tr><td>Host's listing count</td><td class="mono">int</td></tr>
+          <tr><td>Availability (days/yr)</td><td class="mono">int</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap">
+    <h2>The three lines it can predict</h2>
+    <div class="lines">
+      <div class="line-chip entire">
+        <div class="tag"><span class="dot entire"></span> 4 · 5 · 6</div>
+        <h3>Entire home/apt</h3>
+        <p>Usually the majority class in this dataset — the model tends to favour it unless other features point elsewhere.</p>
+      </div>
+      <div class="line-chip private">
+        <div class="tag"><span class="dot private"></span> B · D · F · M</div>
+        <h3>Private room</h3>
+        <p>The second most common outcome, often tied to lower prices and higher minimum-night requirements.</p>
+      </div>
+      <div class="line-chip shared">
+        <div class="tag"><span class="dot shared"></span> L</div>
+        <h3>Shared room</h3>
+        <p>The rarest class — with fewer examples to learn from, predictions here carry the most uncertainty.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap">
+    <div class="card">
+      <h3 style="margin-top:0;">A note on limitations</h3>
+      <p style="margin-bottom:0;">This is a statistical estimate, not a fact about the listing. It reflects patterns in historical data — it can be wrong, and it can reflect biases already present in that data (for instance, which boroughs happen to have more of one room type). Treat the output as a starting point, not a verdict.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="predict.html">Try the predictor</a> · <a href="index.html">back home</a>
+  </div>
+</footer>
+
+</body>
+</html>
